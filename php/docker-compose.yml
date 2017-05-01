@@ -1,6 +1,8 @@
 version: '2'
 services:
-  db:
+  cache:
+      image: redis
+  database:
     container_name: mysql
     image: mysql
     volumes:
@@ -16,8 +18,12 @@ services:
       context: .
       dockerfile: Dockerfile
     image: atilarampazo/web
+    links:
+        - database
+        - cache
     volumes:
-      - ./projetos:/var/www/html
+      - ./:/var/www/html
+    
     ports:
       - 80:80
 
@@ -27,9 +33,9 @@ services:
     ports:
       - 8080:80
     links:
-      - db
+      - database
     environment:
       MYSQL_USERNAME: root
       MYSQL_ROOT_PASSWORD: root
-      PMA_HOST: db
+      PMA_HOST: database
     
